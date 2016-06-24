@@ -13,7 +13,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity
+import com.arvin.gank.annotations.LayoutId;
+import com.arvin.gank.core.BaseAppCompatActivity;
+
+@LayoutId(R.layout.activity_main)
+public class MainActivity extends BaseAppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
@@ -29,6 +33,8 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                ++i;
+                showToast(i%2==0?"哈哈哈哈":"hihhiheii   " + R.layout.activity_main);
             }
         });
 
@@ -40,6 +46,28 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    int i = 0;
+
+    @Override
+    protected void initToolbar(Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    protected void initListeners() {
+
+    }
+
+    @Override
+    protected void initViews(Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    protected void initData() {
+
     }
 
     @Override
