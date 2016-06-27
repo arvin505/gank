@@ -16,6 +16,7 @@
         <include layout="@layout/include_toolbar" />
 
         <com.arvin.gank.widget.MultiSwipeRefreshLayout
+            android:id="@+id/multi_swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
