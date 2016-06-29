@@ -7,7 +7,7 @@ import rx.Observable;
 /**
  * Created by xiaoyi on 2016/6/28.
  */
-public interface IDataModle {
+public interface IDataModel {
     /**
      * 分页查询( Android、iOS、前端、拓展资源、福利、休息视频 )数据
      *
