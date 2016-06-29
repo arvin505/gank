@@ -20,6 +20,7 @@ public class App extends Application {
     private RefWatcher refWatcher;
     private static Context context;
     public Gson gson;
+    public static boolean log = true;
 
 
     public static final long ONE_KB = 1024L;
@@ -54,5 +55,9 @@ public class App extends Application {
 
     public static RefWatcher getRefWatcher(Context context) {
         return ((App) context.getApplicationContext()).refWatcher;
+    }
+
+    public static App getInstance() {
+        return (App) context;
     }
 }

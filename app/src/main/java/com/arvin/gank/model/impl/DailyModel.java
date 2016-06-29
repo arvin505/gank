@@ -1,6 +1,7 @@
 package com.arvin.gank.model.impl;
 
 import com.arvin.gank.bean.GankDaily;
+import com.arvin.gank.gank.EasyGank;
 import com.arvin.gank.model.IDailyModel;
 
 import rx.Observable;
@@ -14,13 +15,13 @@ public class DailyModel implements IDailyModel {
 
     @Override
     public Observable<GankDaily> getDaily(int year, int month, int day) {
-        return Ea
+        return EasyGank.getInstance().getGankService().getDaily(year, month, day);
     }
 
     private DailyModel() {
     }
 
-    public DailyModel getInstance() {
+    public static DailyModel getInstance() {
         return ourInstance;
     }
 

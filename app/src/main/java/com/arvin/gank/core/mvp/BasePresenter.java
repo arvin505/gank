@@ -31,7 +31,7 @@ public class BasePresenter<V extends MvpView> implements Presenter<V> {
         return mMvpView != null;
     }
 
-    public V getMVpView() {
+    public V getMvpView() {
         return mMvpView;
     }
 

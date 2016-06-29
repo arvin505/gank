@@ -1,18 +1,25 @@
 package com.arvin.gank.presenter;
 
 
+import com.anupcowkur.reservoir.ReservoirGetCallback;
+import com.arvin.gank.bean.GankDaily;
 import com.arvin.gank.core.mvp.BasePresenter;
 import com.arvin.gank.gank.GankApi;
+import com.arvin.gank.gank.GankType;
 import com.arvin.gank.gank.GankTypeDict;
 import com.arvin.gank.presenter.iview.MainView;
 import com.arvin.gank.utils.DateUtils;
 import com.arvin.gank.utils.ReservoirUtils;
+import com.google.gson.reflect.TypeToken;
+import com.orhanobut.logger.Logger;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import rx.Subscriber;
 
 
 /**
@@ -92,11 +99,91 @@ public class MainPresenter extends BasePresenter<MainView> {
      * @param refresh 是否是刷新
      * @param oldPage olaPage==GankTypeDict.DONT_SWITCH表示不是切换数据
      */
-    public void getDaily(boolean refresh, int oldPage) {
+    public void getDaily(final boolean refresh, final int oldPage) {
         if (oldPage != GankTypeDict.DONT_SWITCH) {
             page = 1;
         }
-        mCompositeSubscription.add(mDataManager.);
+        mCompositeSubscription.add(mDataManager.getDailyDataByNetWork(currentDate)
+                .subscribe(new Subscriber<List<GankDaily>>() {
+                    @Override
+                    public void onCompleted() {
+                        if (mCompositeSubscription != null) {
+                            mCompositeSubscription.remove(this);
+                        }
+                    }
+
+                    @Override
+                    public void onError(final Throwable e) {
+                        Logger.e(e.getMessage());
+                        if (refresh) {
+                            Type resultType = new TypeToken<List<GankDaily>>() {
+                            }.getType();
+                            reservoirUtils.get(GankType.daily + "", resultType, new ReservoirGetCallback<List<GankDaily>>() {
+                                @Override
+                                public void onSuccess(List<GankDaily> gankDailies) {
+                                    if (oldPage != GankTypeDict.DONT_SWITCH) {
+                                        if (getMvpView() != null) {
+                                            getMvpView().onSwitchSuccess(GankType.daily);
+                                        }
+                                    }
+                                    if (getMvpView() != null) {
+                                        getMvpView().onGetDailySuccess(gankDailies, refresh);
+                                        getMvpView().onFailure(e);
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    switchFailure(oldPage, e);
+                                }
+                            });
+                        } else {
+                            getMvpView().onFailure(e);
+                        }
+                    }
+
+                    @Override
+                    public void onNext(List<GankDaily> gankDailies) {
+                        /*
+                         * 如果是切换数据源
+                         * page=1加载成功了
+                         * 即刚才的loadPage
+                         */
+                        if (oldPage != GankTypeDict.DONT_SWITCH) {
+                            if (getMvpView() != null) {
+                                getMvpView().onSwitchSuccess(GankType.daily);
+                            }
+                        }
+                        if (refresh) {
+                            reservoirUtils.refresh(GankType.daily + "", gankDailies);
+                        }
+                        if (getMvpView() != null) {
+                            getMvpView().onGetDailySuccess(gankDailies, refresh);
+                        }
+                    }
+                }));
 
     }
+
+    /**
+     * 切换分类失败
+     *
+     * @param oldPage oldPage
+     */
+    private void switchFailure(int oldPage, Throwable e) {
+                /*
+         * 如果是切换数据源
+         * 刚才尝试的page＝1失败了的请求
+         * 加载失败
+         * 会影响到原来页面的page
+         * 在这里执行复原page操作
+         */
+        if (oldPage != GankTypeDict.DONT_SWITCH) {
+            page = oldPage;
+        }
+        if (getMvpView() != null) {
+            getMvpView().onFailure(e);
+        }
+    }
+
 }
