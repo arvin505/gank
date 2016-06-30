@@ -37,8 +37,39 @@ public class MainActivity extends BaseDrawerLayoutActivity {
 
     private MainPresenter presenter;
 
+    private int emptyCount = 0;
+    private static final int EMPTY_LIMIT = 5;
 
-    
+    private int gankType;
+
+    @Override
+    protected void initViews(Bundle savedInstanceState) {
+        dataDecoration = new EasyBorderDividerItemDecoration(getResources().getDimensionPixelOffset(R.dimen.data_border_divider_height),
+                getResources().getDimensionPixelOffset(R.dimen.data_border_padding_infra_spans));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_main_about:
+                showToast("关于");
+                break;
+            case R.id.menu_main_home_page:
+                showToast("去主页");
+                break;
+            case R.id.menu_main_top_github:
+                showToast("热门git");
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected NavigationView.OnNavigationItemSelectedListener getNavigationItemSelectedListener() {
@@ -65,10 +96,6 @@ public class MainActivity extends BaseDrawerLayoutActivity {
 
     }
 
-    @Override
-    protected void initViews(Bundle savedInstanceState) {
-
-    }
 
     @Override
     protected void initData() {

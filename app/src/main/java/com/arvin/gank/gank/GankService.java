@@ -1,6 +1,7 @@
 package com.arvin.gank.gank;
 
 import com.arvin.gank.bean.GankDaily;
+import com.arvin.gank.bean.GankData;
 
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -28,5 +29,5 @@ public interface GankService {
      * @return
      */
     @GET("data/{type}/{size}/{page}")
-    Observable<GankDaily> getData(@Path("type") String type, @Path("size") int size, @Path("page") int page);
+    Observable<GankData> getData(@Path("type") String type, @Path("size") int size, @Path("page") int page);
 }

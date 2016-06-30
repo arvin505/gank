@@ -1,10 +1,15 @@
 package com.arvin.gank.data;
 
+import com.arvin.gank.bean.BaseGankData;
 import com.arvin.gank.bean.GankDaily;
+import com.arvin.gank.bean.GankData;
 import com.arvin.gank.model.impl.DailyModel;
+import com.arvin.gank.model.impl.DataModel;
 import com.arvin.gank.presenter.MainPresenter;
 import com.arvin.gank.utils.RxUtils;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
@@ -18,10 +23,12 @@ public class DataManager {
     private static volatile DataManager mInstance;
 
     private DailyModel dailyModel;
+    private DataModel dataModel;
 
 
     private DataManager() {
         dailyModel = DailyModel.getInstance();
+        dataModel = DataModel.getInstance();
     }
 
     public static DataManager getInstance() {
@@ -62,5 +69,14 @@ public class DataManager {
                     }
                 }).compose(RxUtils.<List<GankDaily>>applyIOToMainThreadSchedulers());
 
+    }
+
+    public Observable<ArrayList<BaseGankData>> getDataByNetWork(String type, int size, int page) {
+        return dataModel.getData(type, size, page).map(new Func1<GankData, ArrayList<BaseGankData>>() {
+            @Override
+            public ArrayList<BaseGankData> call(GankData gankData) {
+                return gankData.results;
+            }
+        }).compose(RxUtils.<ArrayList<BaseGankData>>applyIOToMainThreadSchedulers());
     }
 }

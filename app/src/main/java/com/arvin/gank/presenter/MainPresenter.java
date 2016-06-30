@@ -2,7 +2,9 @@ package com.arvin.gank.presenter;
 
 
 import com.anupcowkur.reservoir.ReservoirGetCallback;
+import com.arvin.gank.bean.BaseGankData;
 import com.arvin.gank.bean.GankDaily;
+import com.arvin.gank.bean.GankData;
 import com.arvin.gank.core.mvp.BasePresenter;
 import com.arvin.gank.gank.GankApi;
 import com.arvin.gank.gank.GankType;
@@ -15,6 +17,7 @@ import com.orhanobut.logger.Logger;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -173,11 +176,73 @@ public class MainPresenter extends BasePresenter<MainView> {
      * @param refresh 是否是刷新
      * @param oldPage olaPage==GankTypeDict.DONT_SWITCH表示不是切换数据
      */
-    public void getData(int type, boolean refresh, int oldPage) {
-        if (oldPage!=GankTypeDict.DONT_SWITCH){
+    public void getData(final int type, final boolean refresh, final int oldPage) {
+        if (oldPage != GankTypeDict.DONT_SWITCH) {
             this.page = 1;
         }
-        String gankType = GankTypeDict
+        String gankType = GankTypeDict.type2UrlTypeDict.get(type);
+        if (gankType == null) return;
+        mCompositeSubscription.add(mDataManager.getDataByNetWork(gankType, GankApi.DEFAULT_DATA_SIZE, page)
+                .subscribe(new Subscriber<ArrayList<BaseGankData>>() {
+                    @Override
+                    public void onCompleted() {
+                        if (mCompositeSubscription != null) {
+                            mCompositeSubscription.remove(this);
+                        }
+                    }
+
+                    @Override
+                    public void onError(final Throwable e) {
+                        try {
+                            Logger.d(e.getMessage());
+                        } catch (Throwable e1) {
+                            e1.getMessage();
+                        } finally {
+                            if (refresh) {
+                                Type resultType = new TypeToken<ArrayList<BaseGankData>>() {
+                                }.getType();
+                                reservoirUtils.get(type + "", resultType, new ReservoirGetCallback<ArrayList<BaseGankData>>() {
+                                    @Override
+                                    public void onSuccess(ArrayList<BaseGankData> gankDatas) {
+                                        if (oldPage != GankTypeDict.DONT_SWITCH) {
+                                            if (getMvpView() != null) {
+                                                getMvpView().onSwitchSuccess(type);
+                                                getMvpView().onGetDataSuccess(gankDatas, refresh);
+                                                getMvpView().onFailure(e);
+                                            }
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Exception e) {
+                                        if (getMvpView() != null) {
+                                            switchFailure(oldPage, e);
+                                        }
+                                    }
+                                });
+                            } else {
+                                if (getMvpView() != null) {
+                                    getMvpView().onFailure(e);
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onNext(ArrayList<BaseGankData> gankDatas) {
+
+                        if (oldPage != GankTypeDict.DONT_SWITCH) {
+                            if (getMvpView() != null) {
+                                getMvpView().onSwitchSuccess(type);
+                                getMvpView().onGetDataSuccess(gankDatas, refresh);
+                            }
+                        }
+                        if (refresh) {
+                            reservoirUtils.refresh(type + "", gankDatas);
+                        }
+                    }
+                }));
     }
 
     /**
