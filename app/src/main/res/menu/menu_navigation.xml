@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_sub_setting"
+        android:title="@string/app_menu" />
+    <item
+        android:id="@+id/navigation_title"
+        android:title="gank在手，天下我有">
+
+        <menu>
+            <item
+                android:id="@+id/navigation_daily"
+                android:checked="true"
+                android:icon="@mipmap/ic_daily"
+                android:title="每日精彩" />
+            <item
+                android:id="@+id/navigation_welfare"
+                android:icon="@mipmap/ic_welfare"
+                android:title="福利" />
+
+            <item
+                android:id="@+id/navigation_android"
+                android:icon="@mipmap/ic_android"
+                android:title="Android" />
+            <item
+                android:id="@+id/navigation_ios"
+                android:icon="@mipmap/ic_ios"
+                android:title="IOS" />
+            <item
+                android:id="@+id/navigation_js"
+                android:icon="@mipmap/ic_js"
+                android:title="前端" />
+            <item
+                android:id="@+id/navigation_video"
+                android:icon="@mipmap/ic_video"
+                android:title="休息视频" />
+            <item
+                android:id="@+id/navigation_resources"
+                android:icon="@mipmap/ic_resources"
+                android:title="拓展资源" />
+            <item
+                android:id="@+id/navigation_app"
+                android:icon="@mipmap/ic_app"
+                android:title="App推荐" />
+        </menu>
+    </item>
+
+
+</menu>

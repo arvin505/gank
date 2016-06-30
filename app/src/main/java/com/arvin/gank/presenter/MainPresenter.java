@@ -165,6 +165,21 @@ public class MainPresenter extends BasePresenter<MainView> {
 
     }
 
+
+    /**
+     * * 查询 ( Android、iOS、前端、拓展资源、福利、休息视频 )
+     *
+     * @param type    GankType
+     * @param refresh 是否是刷新
+     * @param oldPage olaPage==GankTypeDict.DONT_SWITCH表示不是切换数据
+     */
+    public void getData(int type, boolean refresh, int oldPage) {
+        if (oldPage!=GankTypeDict.DONT_SWITCH){
+            this.page = 1;
+        }
+        String gankType = GankTypeDict
+    }
+
     /**
      * 切换分类失败
      *

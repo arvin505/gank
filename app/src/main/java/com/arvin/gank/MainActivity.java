@@ -19,6 +19,8 @@ import com.arvin.easyrecyclerview.widget.decorator.EasyBorderDividerItemDecorati
 import com.arvin.gank.annotations.LayoutId;
 import com.arvin.gank.core.BaseAppCompatActivity;
 import com.arvin.gank.core.BaseDrawerLayoutActivity;
+import com.arvin.gank.core.mvp.BasePresenter;
+import com.arvin.gank.presenter.MainPresenter;
 import com.arvin.gank.widget.EasyRecyclerView;
 
 import butterknife.BindView;
@@ -33,7 +35,7 @@ public class MainActivity extends BaseDrawerLayoutActivity {
     private LinearLayoutManager mLinearLayoutManager;
     private StaggeredGridLayoutManager mStaggeredGridLayoutManager;
 
-
+    private MainPresenter presenter;
 
 
     
