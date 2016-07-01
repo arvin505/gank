@@ -9,7 +9,6 @@ import com.arvin.easyrecyclerview.widget.decorator.adpater.EasyRecyclerViewAdapt
 import com.arvin.easyrecyclerview.widget.decorator.holder.EasyRecyclerViewHolder;
 import com.arvin.gank.R;
 
-import java.util.Arrays;
 
 /**
  * Created by xiaoyi on 2016/7/1.
@@ -44,8 +43,13 @@ public class MainAdapter extends EasyRecyclerViewAdapter {
     @Override
     public void onBindRecycleViewHolder(EasyRecyclerViewHolder viewHolder, int position) {
         int layoutType = getRecycleViewItemType(position);
-        switch (layoutType){
-
+        switch (layoutType) {
+            case LAYOUT_TYPE_DAILY:
+                break;
+            case LAYOUT_TYPE_TECHNOLOGY:
+                break;
+            case LAYOUT_TYPE_WELFARE:
+                break;
         }
     }
 
