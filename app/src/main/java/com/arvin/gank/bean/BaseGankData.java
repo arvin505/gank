@@ -43,4 +43,18 @@ public class BaseGankData {// 发布人
     @SerializedName("updatedAt")
     public Date updatedAt;
 
+    @Override
+    public String toString() {
+        return "BaseGankData{" +
+                "who='" + who + '\'' +
+                ", publishedAt=" + publishedAt +
+                ", desc='" + desc + '\'' +
+                ", type='" + type + '\'' +
+                ", url='" + url + '\'' +
+                ", used=" + used +
+                ", objectId='" + objectId + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

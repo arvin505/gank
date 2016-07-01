@@ -39,5 +39,28 @@ public class GankDaily {
 
         @SerializedName("瞎推荐")
         public ArrayList<BaseGankData> recommendData;
+
+        @Override
+        public String toString() {
+            return "DailyResults{" +
+                    "welfareData=" + welfareData +
+                    ", androidData=" + androidData +
+                    ", iosData=" + iosData +
+                    ", jsData=" + jsData +
+                    ", videoData=" + videoData +
+                    ", resourcesData=" + resourcesData +
+                    ", appData=" + appData +
+                    ", recommendData=" + recommendData +
+                    '}';
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return "GankDaily{" +
+                "results=" + results +
+                ", category=" + category +
+                '}';
     }
 }

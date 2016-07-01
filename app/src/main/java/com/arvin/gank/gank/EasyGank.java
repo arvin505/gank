@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class EasyGank {
     private volatile static EasyGank instance;
     private static final OkHttpClient.Builder builder = new OkHttpClient.Builder();
-    private final OkHttpClient okhttpClient;
+
 
     private GankService gankService;
 
@@ -35,9 +35,9 @@ public class EasyGank {
     }
 
     private EasyGank() {
-        builder.connectTimeout(7676, TimeUnit.MILLISECONDS);
-        okhttpClient = builder.build();
-        if (App.log) {
+        OkHttpClient okhttpClient = new OkHttpClient.Builder().connectTimeout(7676, TimeUnit.MILLISECONDS)
+                .build();
+        /*if (App.log) {
             okhttpClient.interceptors().add(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
@@ -46,13 +46,14 @@ public class EasyGank {
                     return response;
                 }
             });
-        }
+        }*/
+
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GankApi.BASE_URL)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(App.getInstance().gson))
-                .client(okhttpClient)
+                //.client(okhttpClient)
                 .build();
         gankService = retrofit.create(GankService.class);
     }

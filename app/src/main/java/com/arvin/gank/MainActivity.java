@@ -1,34 +1,31 @@
 package com.arvin.gank;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.View;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.arvin.easyrecyclerview.widget.decorator.EasyBorderDividerItemDecoration;
 import com.arvin.gank.annotations.LayoutId;
-import com.arvin.gank.core.BaseAppCompatActivity;
+import com.arvin.gank.bean.BaseGankData;
+import com.arvin.gank.bean.GankDaily;
 import com.arvin.gank.core.BaseDrawerLayoutActivity;
-import com.arvin.gank.core.mvp.BasePresenter;
+import com.arvin.gank.gank.GankType;
+import com.arvin.gank.gank.GankTypeDict;
 import com.arvin.gank.presenter.MainPresenter;
-import com.arvin.gank.widget.EasyRecyclerView;
+import com.arvin.gank.presenter.iview.MainView;
 
-import butterknife.BindView;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @LayoutId(R.layout.activity_main)
-public class MainActivity extends BaseDrawerLayoutActivity {
-    @BindView(R.id.main_rv)
-    EasyRecyclerView mainRv;
+public class MainActivity extends BaseDrawerLayoutActivity implements MainView {
+    // @BindView(R.id.main_rv)
+    // EasyRecyclerView mainRv;
 
     private EasyBorderDividerItemDecoration dataDecoration;
     private EasyBorderDividerItemDecoration welfareDecoration;
@@ -44,8 +41,49 @@ public class MainActivity extends BaseDrawerLayoutActivity {
 
     @Override
     protected void initViews(Bundle savedInstanceState) {
-        dataDecoration = new EasyBorderDividerItemDecoration(getResources().getDimensionPixelOffset(R.dimen.data_border_divider_height),
+        dataDecoration = new EasyBorderDividerItemDecoration(
+                getResources().getDimensionPixelOffset(R.dimen.data_border_divider_height),
                 getResources().getDimensionPixelOffset(R.dimen.data_border_padding_infra_spans));
+        welfareDecoration = new EasyBorderDividerItemDecoration(
+                getResources().getDimensionPixelOffset(R.dimen.welfare_border_divider_height),
+                getResources().getDimensionPixelOffset(R.dimen.welfare_border_padding_infra_spans));
+        // mainRv.addItemDecoration(dataDecoration);
+        //  mLinearLayoutManager = mainRv.getLinearLayoutManager();
+        mStaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        mActionBarHelper.setDrawerTitle("GANK MENU");
+
+    }
+
+    @Override
+    protected void initData() {
+        presenter = new MainPresenter();
+        presenter.attachView(this);
+        gankType = GankType.daily;
+        refreshData(gankType);
+    }
+
+    private void refreshData(final int gankType) {
+        presenter.setPage(1);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                refresh(true);
+                switch (gankType) {
+                    case GankType.daily:
+                        presenter.getDaily(true, GankTypeDict.DONT_SWITCH);
+                        break;
+                    case GankType.android:
+                    case GankType.ios:
+                    case GankType.js:
+                    case GankType.resources:
+                    case GankType.welfare:
+                    case GankType.video:
+                    case GankType.app:
+                        presenter.getData(gankType, true, GankTypeDict.DONT_SWITCH);
+                        break;
+                }
+            }
+        });
     }
 
     @Override
@@ -98,7 +136,27 @@ public class MainActivity extends BaseDrawerLayoutActivity {
 
 
     @Override
-    protected void initData() {
+    public void onGetDailySuccess(List<GankDaily> dailyData, boolean refresh) {
+
+    }
+
+    @Override
+    public void onGetDataSuccess(List<BaseGankData> data, boolean refresh) {
+
+    }
+
+    @Override
+    public void onSwitchSuccess(int type) {
+
+    }
+
+    @Override
+    public void getDailyDetail(String title, ArrayList<ArrayList<BaseGankData>> detail) {
+
+    }
+
+    @Override
+    public void onFailure(Throwable e) {
 
     }
 }

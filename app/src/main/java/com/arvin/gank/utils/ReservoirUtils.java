@@ -41,7 +41,6 @@ public class ReservoirUtils {
         Reservoir.putAsync(key, object, new ReservoirPutCallback() {
             @Override
             public void onSuccess() {
-                Logger.i(key, object.getClass());
                 Log.i(TAG, "Put success: key=" + key + " object=" + object.getClass());
             }
 

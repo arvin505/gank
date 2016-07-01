@@ -1,6 +1,9 @@
 package com.arvin.gank.presenter;
 
 
+import android.nfc.Tag;
+import android.util.Log;
+
 import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.arvin.gank.bean.BaseGankData;
 import com.arvin.gank.bean.GankDaily;
@@ -117,7 +120,8 @@ public class MainPresenter extends BasePresenter<MainView> {
 
                     @Override
                     public void onError(final Throwable e) {
-                        Logger.e(e.getMessage());
+                        Log.e("TAG","----e " + e.getMessage());
+                        e.printStackTrace();
                         if (refresh) {
                             Type resultType = new TypeToken<List<GankDaily>>() {
                             }.getType();
@@ -152,6 +156,8 @@ public class MainPresenter extends BasePresenter<MainView> {
                          * page=1加载成功了
                          * 即刚才的loadPage
                          */
+
+                        Log.e("TAG","data---" + gankDailies);
                         if (oldPage != GankTypeDict.DONT_SWITCH) {
                             if (getMvpView() != null) {
                                 getMvpView().onSwitchSuccess(GankType.daily);
