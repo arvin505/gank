@@ -2,13 +2,16 @@ package com.arvin.gank;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.design.widget.NavigationView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.arvin.easyrecyclerview.widget.decorator.EasyBorderDividerItemDecoration;
+import com.arvin.gank.adapter.MainAdapter;
 import com.arvin.gank.annotations.LayoutId;
 import com.arvin.gank.bean.BaseGankData;
 import com.arvin.gank.bean.GankDaily;
@@ -17,15 +20,20 @@ import com.arvin.gank.gank.GankType;
 import com.arvin.gank.gank.GankTypeDict;
 import com.arvin.gank.presenter.MainPresenter;
 import com.arvin.gank.presenter.iview.MainView;
+import com.arvin.gank.widget.EasyRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+
 
 @LayoutId(R.layout.activity_main)
-public class MainActivity extends BaseDrawerLayoutActivity implements MainView {
-    // @BindView(R.id.main_rv)
-    // EasyRecyclerView mainRv;
+public class MainActivity extends BaseDrawerLayoutActivity implements MainView, MainAdapter.OnClickListener {
+    @BindView(R.id.main_rv)
+    EasyRecyclerView mainRv;
+
+    private MainAdapter mainAdapter;
 
     private EasyBorderDividerItemDecoration dataDecoration;
     private EasyBorderDividerItemDecoration welfareDecoration;
@@ -59,6 +67,9 @@ public class MainActivity extends BaseDrawerLayoutActivity implements MainView {
         presenter = new MainPresenter();
         presenter.attachView(this);
         gankType = GankType.daily;
+        mainAdapter = new MainAdapter(this, this.gankType);
+        mainAdapter.setListener(this);
+        mainRv.setAdapter(this.mainAdapter);
         refreshData(gankType);
     }
 
@@ -126,7 +137,7 @@ public class MainActivity extends BaseDrawerLayoutActivity implements MainView {
 
     @Override
     protected void onSwipeRefresh() {
-
+        refreshData(gankType);
     }
 
     @Override
@@ -137,7 +148,16 @@ public class MainActivity extends BaseDrawerLayoutActivity implements MainView {
 
     @Override
     public void onGetDailySuccess(List<GankDaily> dailyData, boolean refresh) {
-
+        if (refresh) {
+            this.emptyCount = 0;
+            this.mainAdapter.clear();
+            this.mainAdapter.setList(dailyData);
+        } else {
+            this.mainAdapter.addAll(dailyData);
+        }
+        this.mainAdapter.notifyDataSetChanged();
+        this.refresh(false);
+        if (dailyData.size() == 0) this.emptyCount++;
     }
 
     @Override
@@ -157,6 +177,13 @@ public class MainActivity extends BaseDrawerLayoutActivity implements MainView {
 
     @Override
     public void onFailure(Throwable e) {
+        this.refresh(false);
+        this.setRefreshStatus(true);
+        Snackbar.make(this.mainRv, R.string.main_load_error, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClickPicture(String url, String title, View view) {
 
     }
 }

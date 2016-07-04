@@ -54,7 +54,7 @@ public class EasyRecyclerViewHolder extends RecyclerView.ViewHolder {
         boolean onItemLongClick(View convertView, int position);
     }
 
-    protected <T extends View> T findViewById(int id) {
+    public  <T extends View> T findViewById(int id) {
         View view = views.get(id);
         if (view == null) {
             view = convertView.findViewById(id);

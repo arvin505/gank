@@ -1,6 +1,9 @@
 package com.arvin.easyrecyclerview.widget.decorator.adpater;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.arvin.easyrecyclerview.widget.decorator.holder.EasyRecyclerViewHolder;
 
@@ -75,7 +78,7 @@ public abstract class EasyRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         EasyRecyclerViewHolder easyRecyclerViewHolder = (EasyRecyclerViewHolder) holder;
-        onBindViewHolder(easyRecyclerViewHolder, position);
+        onBindRecycleViewHolder(easyRecyclerViewHolder, position);
         if (onItemClickListener != null)
             easyRecyclerViewHolder.setOnItemClickListener(onItemClickListener, position);
         if (onItemLongClickListener != null)
@@ -88,5 +91,24 @@ public abstract class EasyRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
 
     public void setOnItemLongClickListener(EasyRecyclerViewHolder.OnItemLongClickListener listener) {
         onItemLongClickListener = listener;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType < 0) return null;
+        if (this.getItemLayouts() == null) return null;
+        int[] layoutIds = this.getItemLayouts();
+        if (layoutIds.length < 1) return null;
+
+        int itemLayoutId;
+        if (layoutIds.length == 1) {
+            itemLayoutId = layoutIds[0];
+        } else {
+            itemLayoutId = layoutIds[viewType];
+        }
+        View view = LayoutInflater.from(parent.getContext()).inflate(itemLayoutId, null);
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        return new EasyRecyclerViewHolder(view);
     }
 }
