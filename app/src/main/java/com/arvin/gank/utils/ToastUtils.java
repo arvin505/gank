@@ -15,7 +15,7 @@ public class ToastUtils {
     private static Resources mResources = mContext.getResources();
     private volatile static Toast mToast;
 
-    private static void show(String msg, int duration) {
+    public static void show(String msg, int duration) {
         if (mToast == null) {
             synchronized (ToastUtils.class) {
                 if (mToast == null) {
@@ -28,6 +28,12 @@ public class ToastUtils {
         mToast.show();
     }
 
+    public static void show(int resId, int duration) {
+        String msg = mResources.getString(resId);
+        show(msg, duration);
+    }
+
+
     public static void show(String msg) {
         show(msg, Toast.LENGTH_SHORT);
     }
@@ -35,4 +41,5 @@ public class ToastUtils {
     public static void show(int resId) {
         show(mResources.getString(resId), Toast.LENGTH_SHORT);
     }
+
 }

@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
  */
 public abstract class BaseAppCompatActivity extends AppCompatActivity {
     protected String TAG = getClass().getSimpleName();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,5 +56,14 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         ToastUtils.show(msg);
     }
 
+    @UiThread
+    protected void showToast(String msg, int duration) {
+        ToastUtils.show(msg, duration);
+    }
+
+    @UiThread
+    protected void showToast(int resId, int duration) {
+        ToastUtils.show(resId, duration);
+    }
 
 }

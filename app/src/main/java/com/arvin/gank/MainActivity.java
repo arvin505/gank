@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.design.widget.NavigationView;
 import android.view.Menu;
@@ -55,8 +56,8 @@ public class MainActivity extends BaseDrawerLayoutActivity implements MainView, 
         welfareDecoration = new EasyBorderDividerItemDecoration(
                 getResources().getDimensionPixelOffset(R.dimen.welfare_border_divider_height),
                 getResources().getDimensionPixelOffset(R.dimen.welfare_border_padding_infra_spans));
-        // mainRv.addItemDecoration(dataDecoration);
-        //  mLinearLayoutManager = mainRv.getLinearLayoutManager();
+        mainRv.addItemDecoration(dataDecoration);
+        mLinearLayoutManager = mainRv.getLinearLayoutManager();
         mStaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mActionBarHelper.setDrawerTitle("GANK MENU");
 
@@ -122,12 +123,17 @@ public class MainActivity extends BaseDrawerLayoutActivity implements MainView, 
 
     @Override
     protected NavigationView.OnNavigationItemSelectedListener getNavigationItemSelectedListener() {
-        return null;
+        return new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                return menuItemChecked(item.getItemId());
+            }
+        };
     }
 
     @Override
     protected int[] getMenuItemIds() {
-        return new int[0];
+        return GankTypeDict.menuIds;
     }
 
     @Override
@@ -142,9 +148,93 @@ public class MainActivity extends BaseDrawerLayoutActivity implements MainView, 
 
     @Override
     protected void initListeners() {
-
+        mainRv.addOnScrollListener(getRecyclerViewOnScrollListener());
     }
 
+    private RecyclerView.OnScrollListener getRecyclerViewOnScrollListener() {
+        return new RecyclerView.OnScrollListener() {
+            private boolean toLast = false;
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                if (layoutManager instanceof LinearLayoutManager) {
+                    LinearLayoutManager manager = (LinearLayoutManager) layoutManager;
+                    // 不滚动
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        // 最后完成显示的item的position 正好是 最后一条数据的index
+                        if (toLast && manager.findLastCompletelyVisibleItemPosition() ==
+                                (manager.getItemCount() - 1)) {
+                            loadMoreRequest();
+                        }
+                    }
+                } else if (layoutManager instanceof StaggeredGridLayoutManager) {
+                    StaggeredGridLayoutManager manager = (StaggeredGridLayoutManager) layoutManager;
+                    // 不滚动
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        /*
+                         * 由于是StaggeredGridLayoutManager
+                         * 取最底部数据可能有两个item，所以判断这之中有一个正好是 最后一条数据的index
+                         * 就OK
+                         */
+                        int[] bottom = manager.findLastCompletelyVisibleItemPositions(new int[2]);
+                        int lastItemCount = manager.getItemCount() - 1;
+                        if (toLast && (bottom[0] == lastItemCount || bottom[1] == lastItemCount)) {
+                            loadMoreRequest();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) toLast = true;
+                else toLast = false;
+
+            }
+        };
+    }
+
+    private void loadMoreRequest() {
+        // 没数据了
+        if (this.emptyCount >= EMPTY_LIMIT) {
+            this.showToast(MainActivity.this.getString(R.string.main_empty_data));
+            return;
+        }
+
+        // 如果没在刷新中
+        if (!MainActivity.this.isRefreshStatus()) {
+            // 加载更多
+            this.presenter.setPage(MainActivity.this.presenter.getPage() + 1);
+            this.setRefreshStatus(false);
+            this.loadMore(MainActivity.this.gankType);
+            this.refresh(true);
+        }
+    }
+
+    /**
+     * 加载更多
+     *
+     * @param gankType gankType
+     */
+    private void loadMore(int gankType) {
+        switch (gankType) {
+            case GankType.daily:
+                this.presenter.getDaily(false, GankTypeDict.DONT_SWITCH);
+                break;
+            case GankType.android:
+            case GankType.ios:
+            case GankType.js:
+            case GankType.resources:
+            case GankType.welfare:
+            case GankType.video:
+            case GankType.app:
+                this.presenter.getData(this.gankType, false, GankTypeDict.DONT_SWITCH);
+                break;
+        }
+    }
 
     @Override
     public void onGetDailySuccess(List<GankDaily> dailyData, boolean refresh) {
@@ -185,5 +275,11 @@ public class MainActivity extends BaseDrawerLayoutActivity implements MainView, 
     @Override
     public void onClickPicture(String url, String title, View view) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.detachView();
     }
 }

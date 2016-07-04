@@ -69,18 +69,20 @@ public abstract class BaseDrawerLayoutActivity extends BaseSwipeRefreshLayoutAct
                 if (menuItem.isChecked()) {
                     old = menuItem;
                 }
-                if (old != null && menuId == old.getItemId()) {
+                if (old != null && itemId == old.getItemId()) {
                     break;
                 }
                 if (itemId == menuId) {
                     now = menuItem;
                     now.setChecked(true);
                     onMenuItemOnclick(now);
+                    showToast(now.getTitle() + "");
                 } else {
                     menuItem.setChecked(false);
                 }
             }
             mDrawerLayout.closeDrawer(mNavigationView);
+
             return true;
         } else {
             return false;

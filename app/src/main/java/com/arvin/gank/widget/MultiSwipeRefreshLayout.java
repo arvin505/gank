@@ -59,6 +59,9 @@ public class MultiSwipeRefreshLayout extends SwipeRefreshLayout {
 
     @Override
     public boolean canChildScrollUp() {
+        if (mCanChildScrollUpCallback != null) {
+            return mCanChildScrollUpCallback.canSwipeRefreshChildScrollUp();
+        }
         return super.canChildScrollUp();
     }
 }
