@@ -1,4 +1,4 @@
-package com.arvin.gank;
+package com.arvin.gank.views;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.arvin.easyrecyclerview.widget.decorator.EasyBorderDividerItemDecoration;
+import com.arvin.gank.R;
 import com.arvin.gank.adapter.MainAdapter;
 import com.arvin.gank.annotations.LayoutId;
 import com.arvin.gank.bean.BaseGankData;
@@ -200,16 +201,16 @@ public class MainActivity extends BaseDrawerLayoutActivity implements MainView, 
     private void loadMoreRequest() {
         // 没数据了
         if (this.emptyCount >= EMPTY_LIMIT) {
-            this.showToast(MainActivity.this.getString(R.string.main_empty_data));
+            this.showToast(getString(R.string.main_empty_data));
             return;
         }
 
         // 如果没在刷新中
-        if (!MainActivity.this.isRefreshStatus()) {
+        if (!isRefreshStatus()) {
             // 加载更多
-            this.presenter.setPage(MainActivity.this.presenter.getPage() + 1);
+            this.presenter.setPage(presenter.getPage() + 1);
             this.setRefreshStatus(false);
-            this.loadMore(MainActivity.this.gankType);
+            this.loadMore(gankType);
             this.refresh(true);
         }
     }
@@ -274,7 +275,7 @@ public class MainActivity extends BaseDrawerLayoutActivity implements MainView, 
 
     @Override
     public void onClickPicture(String url, String title, View view) {
-
+        PictureActivity.startActivityByActivityOptionsCompat(this, url, title, view);
     }
 
     @Override
