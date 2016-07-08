@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_picture_download"
+        android:icon="@mipmap/ic_download"
+        android:orderInCategory="6"
+        android:title="下载图片"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_picture_copy"
+        android:orderInCategory="26"
+        android:title="复制链接"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_picture_share"
+        android:orderInCategory="26"
+        android:title="分享给基友"
+        app:showAsAction="never" />
+</menu>
