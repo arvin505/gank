@@ -8,6 +8,7 @@ import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.arvin.gank.bean.BaseGankData;
 import com.arvin.gank.bean.GankDaily;
 import com.arvin.gank.bean.GankData;
+import com.arvin.gank.constant.Constant;
 import com.arvin.gank.core.mvp.BasePresenter;
 import com.arvin.gank.gank.GankApi;
 import com.arvin.gank.gank.GankType;
@@ -120,7 +121,7 @@ public class MainPresenter extends BasePresenter<MainView> {
 
                     @Override
                     public void onError(final Throwable e) {
-                        Log.e("TAG","----e " + e.getMessage());
+                        Log.e("TAG", "----e " + e.getMessage());
                         e.printStackTrace();
                         if (refresh) {
                             Type resultType = new TypeToken<List<GankDaily>>() {
@@ -157,7 +158,7 @@ public class MainPresenter extends BasePresenter<MainView> {
                          * 即刚才的loadPage
                          */
 
-                        Log.e("TAG","data---" + gankDailies);
+                        Log.e("TAG", "data---" + gankDailies);
                         if (oldPage != GankTypeDict.DONT_SWITCH) {
                             if (getMvpView() != null) {
                                 getMvpView().onSwitchSuccess(GankType.daily);
@@ -271,5 +272,32 @@ public class MainPresenter extends BasePresenter<MainView> {
             getMvpView().onFailure(e);
         }
     }
+
+    public void getDailyDetail(final GankDaily.DailyResults results) {
+        mCompositeSubscription.add(mDataManager.getDailyDetailByDailyResults(results)
+                .subscribe(new Subscriber<ArrayList<ArrayList<BaseGankData>>>() {
+                    @Override
+                    public void onCompleted() {
+                        if (mCompositeSubscription != null) {
+                            mCompositeSubscription.remove(this);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(ArrayList<ArrayList<BaseGankData>> details) {
+                        if (getMvpView() != null) {
+                            getMvpView().getDailyDetail(DateUtils.date2String(
+                                    results.welfareData.get(0).publishedAt.getTime(),
+                                    Constant.DAILY_DATE_FORMAT), details);
+                        }
+                    }
+                }));
+    }
+
 
 }

@@ -1,5 +1,7 @@
 package com.arvin.gank.views;
 
+import android.content.Intent;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -7,11 +9,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.design.widget.NavigationView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.arvin.easyrecyclerview.widget.decorator.EasyBorderDividerItemDecoration;
+import com.arvin.easyrecyclerview.widget.decorator.holder.EasyRecyclerViewHolder;
 import com.arvin.gank.R;
 import com.arvin.gank.adapter.MainAdapter;
 import com.arvin.gank.annotations.LayoutId;
@@ -23,6 +27,7 @@ import com.arvin.gank.gank.GankTypeDict;
 import com.arvin.gank.presenter.MainPresenter;
 import com.arvin.gank.presenter.iview.MainView;
 import com.arvin.gank.widget.EasyRecyclerView;
+import com.squareup.haha.perflib.Main;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,6 +155,24 @@ public class MainActivity extends BaseDrawerLayoutActivity implements MainView, 
     @Override
     protected void initListeners() {
         mainRv.addOnScrollListener(getRecyclerViewOnScrollListener());
+        mainAdapter.setOnItemClickListener(new EasyRecyclerViewHolder.OnItemClickListener() {
+            @Override
+            public void onItemClick(View convertView, int position) {
+                Object o = mainAdapter.getItem(position);
+                if (o instanceof BaseGankData) {
+                    BaseGankData baseGankData = (BaseGankData) o;
+                    if (GankTypeDict.urlType2TypeDict.get(baseGankData.type) == GankType.welfare) {
+                        PictureActivity.startActivityByActivityOptionsCompat(MainActivity.this,
+                                baseGankData.url, baseGankData.desc, convertView);
+                    } else {
+
+                    }
+                } else if (o instanceof GankDaily) {
+                    GankDaily gankDaily = (GankDaily) o;
+                    presenter.getDailyDetail(gankDaily.results);
+                }
+            }
+        });
     }
 
     private RecyclerView.OnScrollListener getRecyclerViewOnScrollListener() {
@@ -263,7 +286,14 @@ public class MainActivity extends BaseDrawerLayoutActivity implements MainView, 
 
     @Override
     public void getDailyDetail(String title, ArrayList<ArrayList<BaseGankData>> detail) {
-
+        //DailyDetailActivity.startActivity(this, title, detail);
+        /*Intent intent = new Intent(this,DailyDetailActivity.class);
+        startActivity(intent);*/
+        Intent intent = new Intent(this, DailyDetailActivity.class);
+        intent.putExtra("sss", title);
+        intent.putExtra("sssdddd", detail);
+        startActivity(intent);
+        Log.e(TAG,"------------");
     }
 
     @Override

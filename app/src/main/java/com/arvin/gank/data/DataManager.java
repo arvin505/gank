@@ -79,4 +79,39 @@ public class DataManager {
             }
         }).compose(RxUtils.<ArrayList<BaseGankData>>applyIOToMainThreadSchedulers());
     }
+
+    public Observable<ArrayList<ArrayList<BaseGankData>>> getDailyDetailByDailyResults(GankDaily.DailyResults results) {
+        return Observable.just(results).map(new Func1<GankDaily.DailyResults, ArrayList<ArrayList<BaseGankData>>>() {
+            @Override
+            public ArrayList<ArrayList<BaseGankData>> call(GankDaily.DailyResults results) {
+                ArrayList<ArrayList<BaseGankData>> cardData = new ArrayList<ArrayList<BaseGankData>>();
+                if (results.welfareData != null && !results.welfareData.isEmpty()) {
+                    cardData.add(results.welfareData);
+                }
+                if (results.androidData != null && !results.androidData.isEmpty()) {
+                    cardData.add(results.androidData);
+                }
+                if (results.iosData != null && !results.iosData.isEmpty()) {
+                    cardData.add(results.iosData);
+                }
+                if (results.jsData != null && !results.jsData.isEmpty()) {
+                    cardData.add(results.jsData);
+                }
+                if (results.videoData != null && !results.videoData.isEmpty()) {
+                    cardData.add(results.videoData);
+                }
+                if (results.resourcesData != null && !results.resourcesData.isEmpty()) {
+                    cardData.add(results.resourcesData);
+                }
+                if (results.appData != null && !results.appData.isEmpty()) {
+                    cardData.add(results.appData);
+                }
+                if (results.recommendData != null && !results.recommendData.isEmpty()) {
+                    cardData.add(results.recommendData);
+                }
+                return cardData;
+            }
+        }).compose(RxUtils.<ArrayList<ArrayList<BaseGankData>>>applyIOToMainThreadSchedulers());
+    }
+
 }

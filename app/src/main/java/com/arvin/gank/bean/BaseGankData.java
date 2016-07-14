@@ -2,12 +2,13 @@ package com.arvin.gank.bean;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by xiaoyi on 2016/6/28.
  */
-public class BaseGankData {// 发布人
+public class BaseGankData implements Serializable {// 发布人
     @SerializedName("who")
     public String who;
 
